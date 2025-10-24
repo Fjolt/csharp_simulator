@@ -1,0 +1,36 @@
+sun:
+  position_x: 1.4839179032551843E11
+  position_y: 1.4814783128003838E10
+  position_z: 6.4208134495262575E9
+earth:
+  rotation_x: -179.46807441832794
+  rotation_y: -0.14059807480030853
+  rotation_z: 0.0022033304753598694
+moon:
+  position_x: 3.245470475007939E8
+  position_y: -1.51799735820824E8
+  position_z: -8.142223370170395E7
+type: "tle"
+epoch: "2025-03-26T23:41:00.000096Z"
+satellites:
+  sat2:
+    tle_line1: "1 43013U 17073E   25085.93263889  .00000120  00000-0  20432-4 0  9994"
+    tle_line2: "2 43013  97.3713 148.8566 0013534 101.6123 258.6981 15.24236274275648"
+    path: "Sputnik_1/Prefabs/Sputnik_1"
+    mass: 3.0
+    size_x: 1.0
+    size_y: 1.0
+    size_z: 1.0
+    thrusterPower: 50.0
+    impulse: 200.0
+  sat1:
+    tle_line1: "1 25544U 98067A   25133.18664600  .00008383  00000-0  15740-3 0  9997"
+    tle_line2: "2 25544  51.6343 120.4533 0002335 105.7353 254.3893 15.49501655509738"
+    path: "Sputnik_1/Prefabs/Sputnik_1"
+    mass: 3.0
+    size_x: 1.0
+    size_y: 1.0
+    size_z: 1.0
+    thrusterPower: 50.0
+    impulse: 200.0
+
