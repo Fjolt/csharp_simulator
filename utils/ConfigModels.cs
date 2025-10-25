@@ -38,4 +38,11 @@ namespace Utils
         public double impulse { get; set; }
     }
 
+    public sealed class SatState
+    {
+        public double PositionX, PositionY, PositionZ;   // meters
+        public double VelocityX, VelocityY, VelocityZ;   // m/s
+        public DateTime EpochUtc;
+    }
+
 }

@@ -6,12 +6,6 @@ namespace Utils;
 
 public static class TLEtoSat
 {
-    public sealed class SatState
-    {
-        public double PositionX, PositionY, PositionZ;   // meters
-        public double VelocityX, VelocityY, VelocityZ;   // m/s
-        public DateTime EpochUtc;
-    }
 
     public static SatState FromTLEAtEpoch(SatTLE tle, DateTime epochUtc)
     {
