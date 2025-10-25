@@ -20,9 +20,6 @@ namespace Utils
 
     public sealed class RootCfg
     {
-        public Vector3 sun { get; set; } = new();
-        public EarthOri earth { get; set; } = new();
-        public Vector3 moon { get; set; } = new();
         public string type { get; set; } = string.Empty;
         public DateTime epoch { get; set; }
         public Dictionary<string, SatTLE> satellites { get; set; } = new();
