@@ -8,10 +8,7 @@ namespace Interop
         public static extern int on_init(string kernelsDir);
 
         [DllImport("orbit_dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int sun_position_iso8601(string utcIso, double[] pos_km);
-
-        [DllImport("orbit_dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int moon_position_iso8601(string utcIso, double[] pos_km);
+        public static extern int body_position_iso8601(string utcIso, double[] pos_km, string body);
 
         [DllImport("orbit_dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr get_last_error();

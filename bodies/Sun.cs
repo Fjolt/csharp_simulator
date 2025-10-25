@@ -1,4 +1,7 @@
-namespace csharp_simulator.Bodies;
+using System;
+using Interop;
+
+namespace Bodies;
 
 public sealed class Sun
 {
@@ -15,7 +18,7 @@ public sealed class Sun
     {
         var iso = SpiceContext.ToIsoUtc(utc);
         var v = new double[3];
-        int rc = Native.sun_position_iso8601(iso, v);
+        int rc = Native.body_position_iso8601(iso, v, "SUN");
         if (rc != 0) throw new InvalidOperationException("Sun query failed: " + Native.LastError);
 
         PositionX = v[0];

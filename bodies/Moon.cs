@@ -1,4 +1,8 @@
-namespace csharp_simulator.Bodies;
+
+using System;
+using Interop;
+
+namespace Bodies;
 
 public sealed class Moon
 {
@@ -15,7 +19,7 @@ public sealed class Moon
     {
         var iso = SpiceContext.ToIsoUtc(utc);
         var v = new double[3];
-        int rc = Native.moon_position_iso8601(iso, v);
+        int rc = Native.body_position_iso8601(iso, v, "MOON");
         if (rc != 0) throw new InvalidOperationException("Moon query failed: " + Native.LastError);
 
         PositionX = v[0];

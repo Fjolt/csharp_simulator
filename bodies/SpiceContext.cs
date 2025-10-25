@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Interop;
 
-namespace csharp_simulator.Bodies
+namespace Bodies
 {
     public sealed class SpiceContext
     {

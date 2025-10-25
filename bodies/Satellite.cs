@@ -1,4 +1,4 @@
-namespace csharp_simulator.Bodies;
+namespace Bodies;
 
 public class Satellite
 {
