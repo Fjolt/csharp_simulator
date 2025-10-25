@@ -23,7 +23,7 @@ class Program
             string name = kv.Key;
             var sat = kv.Value;
 
-            var state = TLEtoSat.FromTLEAtEpoch(sat); // or FromTLEAtUtc(sat, cfg.epoch)
+            var state = TLEtoSat.FromTLEAtEpoch(sat, cfg.epoch); // or FromTLEAtUtc(sat, cfg.epoch)
 
             Console.WriteLine($"[{name}] epoch: {state.EpochUtc:O}");
             Console.WriteLine($"  r (m):  ({state.PositionX:F3}, {state.PositionY:F3}, {state.PositionZ:F3})");
