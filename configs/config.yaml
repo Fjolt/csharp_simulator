@@ -14,14 +14,14 @@ type: "tle"
 epoch: "2025-03-26T23:41:00.000096Z"
 satellites:
   sat2:
-    tle_line1: "1 43013U 17073E   25085.93263889  .00000120  00000-0  20432-4 0  9994"
-    tle_line2: "2 43013  97.3713 148.8566 0013534 101.6123 258.6981 15.24236274275648"
+    tle_line1: "1 44714C 19074B   25298.13729167 -.00006400  00000+0 -42881-3 0  2982"
+    tle_line2: "2 44714  53.0536  75.1352 0001267  85.3073 161.2638 15.06407210    13"
     path: "Sputnik_1/Prefabs/Sputnik_1"
     mass: 3.0
     size_x: 1.0
     size_y: 1.0
     size_z: 1.0
-    thrusterPower: 50.0
+    thruster_power: 50.0
     impulse: 200.0
   sat1:
     tle_line1: "1 25544U 98067A   25133.18664600  .00008383  00000-0  15740-3 0  9997"
@@ -31,6 +31,6 @@ satellites:
     size_x: 1.0
     size_y: 1.0
     size_z: 1.0
-    thrusterPower: 50.0
+    thruster_power: 50.0
     impulse: 200.0
 

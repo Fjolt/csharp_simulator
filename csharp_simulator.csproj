@@ -13,4 +13,9 @@
   </None>
 </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="One_Sgp4" Version="1.1.0" />
+    <PackageReference Include="YamlDotNet" Version="16.3.0" />
+  </ItemGroup>
+
 </Project>

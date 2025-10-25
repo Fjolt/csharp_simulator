@@ -1,31 +1,41 @@
 ﻿
+// Program.cs (snippet)
 using System;
 using Bodies;
-using Interop;
+using Utils;
 
 class Program
 {
     static void Main()
     {
-        // init SPICE once
+        // Initialize CSPICE once (for Sun/Moon later)
         var spice = new SpiceContext("kernels");
 
-        var sun  = new Sun(spice);
-        var moon = new Moon(spice);
+        // Load YAML
+        RootCfg cfg =YamlReader.Load("C:/Users/Veronika/Desktop/useful_stuff/wokr/orekit_wrapper/csharp_simulator/configs/config.yaml");
+        Console.WriteLine($"Config epoch (UTC): {cfg.epoch:O}");
+        Console.WriteLine($"Type: {cfg.type}");
+        Console.WriteLine($"Sat count: {cfg.satellites.Count}");
 
-        DateTime start = DateTime.UtcNow.Date; // or your YAML epoch
-
-        for (int d = 0; d < 30; d++)
+        // For each satellite: parse TLE and get state at its own epoch
+        foreach (var kv in cfg.satellites)
         {
-            var t = start.AddDays(d);
+            string name = kv.Key;
+            var sat = kv.Value;
 
-            sun.UpdatePosition(t);
-            moon.UpdatePosition(t);
+            var state = TLEtoSat.FromTLEAtEpoch(sat); // or FromTLEAtUtc(sat, cfg.epoch)
 
-            Console.WriteLine(
-                $"{t:yyyy-MM-dd}  " +
-                $"Sun:  X={sun.PositionX:F0} km  Y={sun.PositionY:F0} km  Z={sun.PositionZ:F0} km   " +
-                $"Moon: X={moon.PositionX:F0} km  Y={moon.PositionY:F0} km  Z={moon.PositionZ:F0} km");
+            Console.WriteLine($"[{name}] epoch: {state.EpochUtc:O}");
+            Console.WriteLine($"  r (m):  ({state.PositionX:F3}, {state.PositionY:F3}, {state.PositionZ:F3})");
+            Console.WriteLine($"  v (m/s):({state.VelocityX:F6}, {state.VelocityY:F6}, {state.VelocityZ:F6})");
         }
+
+        // If you also want Sun/Moon at cfg.epoch:
+        var sun = new Sun(spice);
+        var moon = new Moon(spice);
+        sun.UpdatePosition(cfg.epoch);
+        moon.UpdatePosition(cfg.epoch);
+        Console.WriteLine($"Sun @ epoch:  X={sun.PositionX:F0} Y={sun.PositionY:F0} Z={sun.PositionZ:F0} km");
+        Console.WriteLine($"Moon @ epoch: X={moon.PositionX:F0} Y={moon.PositionY:F0} Z={moon.PositionZ:F0} km");
     }
 }
