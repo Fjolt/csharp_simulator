@@ -36,6 +36,8 @@ namespace Utils
         public double size_z { get; set; }
         public double thruster_power { get; set; }
         public double impulse { get; set; }
+
+        public SatState state;
     }
 
     public sealed class SatState
