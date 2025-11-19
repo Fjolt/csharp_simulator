@@ -3,6 +3,7 @@
 using System;
 using Bodies;
 using Utils;
+using Burns;
 
 class Program
 {
@@ -23,7 +24,7 @@ class Program
             string name = kv.Key;
             var sat = kv.Value;
 
-            var state = TLEtoSat.FromTLEAtEpoch(sat, cfg.epoch, 3.0); // or FromTLEAtUtc(sat, cfg.epoch)
+            var state = Propagation.FromTLEAtEpoch(sat, cfg.epoch, 3.0); // or FromTLEAtUtc(sat, cfg.epoch)
 
             Console.WriteLine($"[{name}] epoch: {state.EpochUtc:O}");
             Console.WriteLine($"  r (m):  ({state.PositionX:F3}, {state.PositionY:F3}, {state.PositionZ:F3})");
@@ -43,23 +44,89 @@ class Program
         DateTime t0 = DateTime.UtcNow;
 
         // Include endpoint:
-        int samples = 15;   // 1201
+        int samples = 3;   // 1201
         double step = 3.0;            // seconds
 
-        for (int i = 1; i < samples+1; i++)
+        for (int i = 2; i < samples + 2; i++)
         {
             foreach (var kv in cfg.satellites)
             {
                 string name = kv.Key;
                 var sat = kv.Value;
+                var stateBefore = Propagation.FromTLEAtEpoch(sat, cfg.epoch, (i - 1) * step); // or FromTLEAtUtc(sat, cfg.epoch)
+                var stateAfterr = Propagation.FromTLEAtEpoch(sat, cfg.epoch, i * step); // or FromTLEAtUtc(sat, cfg.epoch)
 
-                var state = TLEtoSat.FromTLEAtEpoch(sat, cfg.epoch, i*step); // or FromTLEAtUtc(sat, cfg.epoch)
-
-                Console.WriteLine($"[{name}] epoch: {state.EpochUtc:O}");
-                Console.WriteLine($"  r (m):  ({state.PositionX:F3}, {state.PositionY:F3}, {state.PositionZ:F3})");
-                Console.WriteLine($"  v (m/s):({state.VelocityX:F6}, {state.VelocityY:F6}, {state.VelocityZ:F6})");
+                for (double offset = 0.5; offset < step; offset += 0.5)
+                {
+                    Vector3 pos = Propagation.LerpPositionByOffset(stateBefore, stateAfterr, offset, step);
+                    Console.WriteLine($"[{name}] epoch: {stateBefore.EpochUtc.ToUniversalTime().AddSeconds(offset):O}");
+                    Console.WriteLine($"  r (m):  ({pos.X:F3}, {pos.Y:F3}, {pos.Z:F3})");
+                    Console.WriteLine($"  v (m/s):({stateBefore.VelocityX:F6}, {stateBefore.VelocityY:F6}, {stateBefore.VelocityZ:F6})");
+                    // Use pos.X, pos.Y, pos.Z (meters) for your object at t0 + offset
+                }
             }
 
         }
+
+        var satt = cfg.satellites["sat1"];
+        
+        string L1 = satt.tle_line1;
+        string L2 = satt.tle_line2;
+
+        Console.WriteLine(L1);
+        Console.WriteLine(L2);
+
+        var stateBurn = Propagation.FromTLEAtEpoch(satt, cfg.epoch, 2 * step);
+
+        Console.WriteLine($" Position X: {stateBurn.PositionX} ");
+        Console.WriteLine($" Position Y: {stateBurn.PositionY}");
+        Console.WriteLine($" Position Z: {stateBurn.PositionZ}");
+        Console.WriteLine($" Velocity X: {stateBurn.VelocityX}");
+        Console.WriteLine($" Velocity X: {stateBurn.VelocityY}");
+        Console.WriteLine($" Velocity X: {stateBurn.VelocityZ}");
+        Console.WriteLine($" Epoch: {stateBurn.EpochUtc}");
+
+        stateBurn = ImpulseBurn.burnWithDeltaV(stateBurn, 6.0, 0.0, 0.0);
+
+        Console.WriteLine($" Position X: {stateBurn.PositionX} ");
+        Console.WriteLine($" Position Y: {stateBurn.PositionY}");
+        Console.WriteLine($" Position Z: {stateBurn.PositionZ}");
+        Console.WriteLine($" Velocity X: {stateBurn.VelocityX}");
+        Console.WriteLine($" Velocity X: {stateBurn.VelocityY}");
+        Console.WriteLine($" Velocity X: {stateBurn.VelocityZ}");
+        Console.WriteLine($" Epoch: {stateBurn.EpochUtc}");
+        
+        var keplerElems = OrbitalUtils.StateToKepler(stateBurn);
+
+        Console.WriteLine($"  SemiMajorAxisKm: {keplerElems. SemiMajorAxisKm} ");
+        Console.WriteLine($" Eccentricity: {keplerElems.Eccentricity}");
+        Console.WriteLine($" InclinationRad: {keplerElems.InclinationRad}");
+        Console.WriteLine($" RAANRad: {keplerElems.RAANRad}");
+        Console.WriteLine($" ArgPerigeeRad: {keplerElems.ArgPerigeeRad}");
+        Console.WriteLine($" MeanAnomalyRad: {keplerElems.MeanAnomalyRad}");
+
+        Console.WriteLine($" BEFORE: {satt.tle_line1}");
+        Console.WriteLine($" BEFORE: {satt.tle_line2}");
+        satt = ImpulseBurn.changeTLEPostBurn(stateBurn, satt);
+
+        Console.WriteLine($" AFTER: {satt.tle_line1}");
+        Console.WriteLine($" AFTER: {satt.tle_line2}");
+
+        for (int i = 2; i < samples + 2; i++)
+        {
+            var stateBefore = Propagation.FromTLEAtEpoch(satt, cfg.epoch, (i - 1) * step); // or FromTLEAtUtc(sat, cfg.epoch)
+            var stateAfterr = Propagation.FromTLEAtEpoch(satt, cfg.epoch, i * step); // or FromTLEAtUtc(sat, cfg.epoch)
+
+            for (double offset = 0.5; offset < step; offset += 0.5)
+            {
+                Vector3 pos = Propagation.LerpPositionByOffset(stateBefore, stateAfterr, offset, step);
+                Console.WriteLine($"[  ] epoch: {stateBefore.EpochUtc.ToUniversalTime().AddSeconds(offset):O}");
+                Console.WriteLine($"  r (m):  ({pos.X:F3}, {pos.Y:F3}, {pos.Z:F3})");
+                Console.WriteLine($"  v (m/s):({stateBefore.VelocityX:F6}, {stateBefore.VelocityY:F6}, {stateBefore.VelocityZ:F6})");
+                // Use pos.X, pos.Y, pos.Z (meters) for your object at t0 + offset
+            }
+
+        }
+
     }
 }
