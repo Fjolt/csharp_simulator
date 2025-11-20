@@ -2,28 +2,31 @@ using System.IO;
 using YamlDotNet.Serialization;
 using Utils;
 
-namespace Utils;
-public static class YamlReader
+namespace Utils
 {
-    private static readonly IDeserializer _deserializer =
-        new DeserializerBuilder()
-            .IgnoreUnmatchedProperties()
-            .Build();
-
-    public static RootCfg Load(string path)
+    public static class YamlReader
     {
-        if (!File.Exists(path))
-            throw new FileNotFoundException("YAML config not found", path);
+        private static readonly IDeserializer _deserializer =
+            new DeserializerBuilder()
+                .IgnoreUnmatchedProperties()
+                .Build();
 
-        var text = File.ReadAllText(path);
-        var cfg = _deserializer.Deserialize<RootCfg>(text);
+        public static RootCfg Load(string path)
+        {
+            if (!File.Exists(path))
+                throw new FileNotFoundException("YAML config not found", path);
 
-        if (cfg == null)
-            throw new InvalidDataException("Failed to deserialize YAML config.");
+            var text = File.ReadAllText(path);
+            var cfg = _deserializer.Deserialize<RootCfg>(text);
 
-        if (cfg.satellites == null || cfg.satellites.Count == 0)
-            throw new InvalidDataException("No satellites found in YAML under 'satellites:'.");
+            if (cfg == null)
+                throw new InvalidDataException("Failed to deserialize YAML config.");
 
-        return cfg;
+            if (cfg.satellites == null || cfg.satellites.Count == 0)
+                throw new InvalidDataException("No satellites found in YAML under 'satellites:'.");
+
+            return cfg;
+        }
     }
+
 }
